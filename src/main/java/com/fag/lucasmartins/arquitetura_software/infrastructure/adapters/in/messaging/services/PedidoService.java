@@ -1,3 +1,4 @@
+<<<<<<< HEAD:src/main/java/com/fag/lucasmartins/arquitetura_software/infrastructure/adapters/in/messaging/services/PedidoService.java
 package com.fag.lucasmartins.arquitetura_software.infrastructure.adapters.in.messaging.services;
 
 import java.util.List;
@@ -6,6 +7,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+=======
+package com.fag.lucasmartins.arquitetura_software.application.services;
+>>>>>>> 0ca4be6e81a4a218adffd67f0b9c1d6bca84636e:src/main/java/com/fag/lucasmartins/arquitetura_software/application/services/PedidoService.java
 
 import com.fag.lucasmartins.arquitetura_software.application.ports.in.service.PedidoServicePort;
 import com.fag.lucasmartins.arquitetura_software.application.ports.out.persistence.PedidoRepositoryPort;
@@ -15,7 +19,17 @@ import com.fag.lucasmartins.arquitetura_software.core.domain.bo.PedidoBO;
 import com.fag.lucasmartins.arquitetura_software.core.domain.bo.PedidoProdutoBO;
 import com.fag.lucasmartins.arquitetura_software.core.domain.bo.PessoaBO;
 import com.fag.lucasmartins.arquitetura_software.core.domain.bo.ProdutoBO;
+<<<<<<< HEAD:src/main/java/com/fag/lucasmartins/arquitetura_software/infrastructure/adapters/in/messaging/services/PedidoService.java
 import com.fag.lucasmartins.arquitetura_software.infrastructure.adapters.out.persistence.h2.exceptions.RepositorioException;
+=======
+import com.fag.lucasmartins.arquitetura_software.core.domain.exceptions.DomainException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+>>>>>>> 0ca4be6e81a4a218adffd67f0b9c1d6bca84636e:src/main/java/com/fag/lucasmartins/arquitetura_software/application/services/PedidoService.java
 
 @Service
 public class PedidoService implements PedidoServicePort {
@@ -37,6 +51,7 @@ public class PedidoService implements PedidoServicePort {
     public PedidoBO criarPedido(PedidoBO pedidoBO) {
         pedidoBO.validarCamposObrigatorios();
 
+<<<<<<< HEAD:src/main/java/com/fag/lucasmartins/arquitetura_software/infrastructure/adapters/in/messaging/services/PedidoService.java
         PessoaBO pessoaBO;
         try {
             pessoaBO = pessoaRepositoryPort.encontrarPorId(pedidoBO.getPessoa().getId());
@@ -46,6 +61,9 @@ public class PedidoService implements PedidoServicePort {
             pessoaBO = pessoaRepositoryPort.salvar(novaPessoa);
         }
 
+=======
+        final PessoaBO pessoaBO = pessoaRepositoryPort.encontrarPorId(pedidoBO.getPessoa().getId());
+>>>>>>> 0ca4be6e81a4a218adffd67f0b9c1d6bca84636e:src/main/java/com/fag/lucasmartins/arquitetura_software/application/services/PedidoService.java
         pedidoBO.setPessoa(pessoaBO);
         verificarProdutos(pedidoBO);
 
@@ -65,6 +83,7 @@ public class PedidoService implements PedidoServicePort {
         final List<ProdutoBO> produtosEncontrados = produtoRepositoryPort.encontrarPorIds(listaIdsProduto);
         final Map<Integer, ProdutoBO> mapaDeProdutos = produtosEncontrados.stream()
                 .collect(Collectors.toMap(ProdutoBO::getId, produto -> produto));
+<<<<<<< HEAD:src/main/java/com/fag/lucasmartins/arquitetura_software/infrastructure/adapters/in/messaging/services/PedidoService.java
 
         for (Integer produtoId : listaIdsProduto) {
             if (!mapaDeProdutos.containsKey(produtoId)) {
@@ -78,6 +97,8 @@ public class PedidoService implements PedidoServicePort {
             }
         }
 
+=======
+>>>>>>> 0ca4be6e81a4a218adffd67f0b9c1d6bca84636e:src/main/java/com/fag/lucasmartins/arquitetura_software/application/services/PedidoService.java
         pedidoBO.getItens()
                 .forEach(pedidoProdutoBO -> prepararProdutos(pedidoProdutoBO, mapaDeProdutos));
 
@@ -88,6 +109,12 @@ public class PedidoService implements PedidoServicePort {
         pedidoProdutoBO.validar();
         final Integer produtoId = pedidoProdutoBO.getProduto().getId();
         final ProdutoBO produtoBO = mapaDeProdutos.get(produtoId);
+<<<<<<< HEAD:src/main/java/com/fag/lucasmartins/arquitetura_software/infrastructure/adapters/in/messaging/services/PedidoService.java
+=======
+        if (produtoBO == null) {
+            throw new DomainException("Produto com ID " + produtoId + " não foi encontrado no catálogo.");
+        }
+>>>>>>> 0ca4be6e81a4a218adffd67f0b9c1d6bca84636e:src/main/java/com/fag/lucasmartins/arquitetura_software/application/services/PedidoService.java
         produtoBO.validarEstoqueDisponivel(pedidoProdutoBO.getQuantidade());
         produtoBO.diminuirEstoque(pedidoProdutoBO.getQuantidade());
 

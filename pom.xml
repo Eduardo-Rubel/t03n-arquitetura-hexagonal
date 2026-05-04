@@ -46,7 +46,10 @@
 				<scope>import</scope>
 			</dependency>
 		</dependencies>
+<<<<<<< HEAD
     
+=======
+>>>>>>> 0ca4be6e81a4a218adffd67f0b9c1d6bca84636e
 	</dependencyManagement>
 
 	<dependencies>

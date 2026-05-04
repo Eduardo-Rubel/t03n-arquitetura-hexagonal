@@ -1,14 +1,24 @@
 package com.fag.lucasmartins.arquitetura_software.infrastructure.adapters.in.messaging.entradaestoque.listener;
 
+<<<<<<< HEAD
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+=======
+>>>>>>> 0ca4be6e81a4a218adffd67f0b9c1d6bca84636e
 import com.fag.lucasmartins.arquitetura_software.application.ports.in.service.EstoqueServicePort;
 import com.fag.lucasmartins.arquitetura_software.core.domain.bo.AdicionarEstoqueBO;
 import com.fag.lucasmartins.arquitetura_software.infrastructure.adapters.in.messaging.entradaestoque.dto.EntradaEstoqueDTO;
 import com.fag.lucasmartins.arquitetura_software.infrastructure.adapters.in.messaging.entradaestoque.exceptions.ConsumerSQSException;
 import com.fag.lucasmartins.arquitetura_software.infrastructure.adapters.in.messaging.entradaestoque.mapper.EntradaEstoqueDTOMapper;
+<<<<<<< HEAD
+=======
+import io.awspring.cloud.sqs.annotation.SqsListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+>>>>>>> 0ca4be6e81a4a218adffd67f0b9c1d6bca84636e
 
 @Component
 public class EntradaEstoqueSqsAdapter {
@@ -36,4 +46,7 @@ public class EntradaEstoqueSqsAdapter {
         }
     }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0ca4be6e81a4a218adffd67f0b9c1d6bca84636e
