@@ -1,0 +1,98 @@
+package com.fag.lucasmartins.arquitetura_software.infrastructure.adapters.in.messaging.services;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.fag.lucasmartins.arquitetura_software.application.ports.in.service.PedidoServicePort;
+import com.fag.lucasmartins.arquitetura_software.application.ports.out.persistence.PedidoRepositoryPort;
+import com.fag.lucasmartins.arquitetura_software.application.ports.out.persistence.PessoaRepositoryPort;
+import com.fag.lucasmartins.arquitetura_software.application.ports.out.persistence.ProdutoRepositoryPort;
+import com.fag.lucasmartins.arquitetura_software.core.domain.bo.PedidoBO;
+import com.fag.lucasmartins.arquitetura_software.core.domain.bo.PedidoProdutoBO;
+import com.fag.lucasmartins.arquitetura_software.core.domain.bo.PessoaBO;
+import com.fag.lucasmartins.arquitetura_software.core.domain.bo.ProdutoBO;
+import com.fag.lucasmartins.arquitetura_software.infrastructure.adapters.out.persistence.h2.exceptions.RepositorioException;
+
+@Service
+public class PedidoService implements PedidoServicePort {
+
+    private final PedidoRepositoryPort pedidoRepositoryPort;
+
+    private final PessoaRepositoryPort pessoaRepositoryPort;
+
+    private final ProdutoRepositoryPort produtoRepositoryPort;
+
+    public PedidoService(PedidoRepositoryPort pedidoRepositoryPort, PessoaRepositoryPort pessoaRepositoryPort, ProdutoRepositoryPort produtoRepositoryPort) {
+        this.pedidoRepositoryPort = pedidoRepositoryPort;
+        this.pessoaRepositoryPort = pessoaRepositoryPort;
+        this.produtoRepositoryPort = produtoRepositoryPort;
+    }
+
+    @Override
+    @Transactional
+    public PedidoBO criarPedido(PedidoBO pedidoBO) {
+        pedidoBO.validarCamposObrigatorios();
+
+        PessoaBO pessoaBO;
+        try {
+            pessoaBO = pessoaRepositoryPort.encontrarPorId(pedidoBO.getPessoa().getId());
+        } catch (RepositorioException e) {
+            PessoaBO novaPessoa = new PessoaBO();
+            novaPessoa.setId(pedidoBO.getPessoa().getId());
+            pessoaBO = pessoaRepositoryPort.salvar(novaPessoa);
+        }
+
+        pedidoBO.setPessoa(pessoaBO);
+        verificarProdutos(pedidoBO);
+
+        pedidoBO.normalizarCep();
+        pedidoBO.validarCep();
+        pedidoBO.calcularValorTotal();
+
+        return pedidoRepositoryPort.salvar(pedidoBO);
+    }
+
+    private void verificarProdutos(PedidoBO pedidoBO) {
+        final List<Integer> listaIdsProduto = pedidoBO.getItens().stream()
+                .map(PedidoProdutoBO::getProduto)
+                .map(ProdutoBO::getId)
+                .collect(Collectors.toList());
+
+        final List<ProdutoBO> produtosEncontrados = produtoRepositoryPort.encontrarPorIds(listaIdsProduto);
+        final Map<Integer, ProdutoBO> mapaDeProdutos = produtosEncontrados.stream()
+                .collect(Collectors.toMap(ProdutoBO::getId, produto -> produto));
+
+        for (Integer produtoId : listaIdsProduto) {
+            if (!mapaDeProdutos.containsKey(produtoId)) {
+                ProdutoBO novoProduto = new ProdutoBO();
+                novoProduto.setId(produtoId);
+                novoProduto.setNome("Produto " + produtoId);
+                novoProduto.setEstoque(100); 
+                novoProduto.setPreco(10.0);
+                mapaDeProdutos.put(produtoId, novoProduto);
+                produtosEncontrados.add(novoProduto);
+            }
+        }
+
+        pedidoBO.getItens()
+                .forEach(pedidoProdutoBO -> prepararProdutos(pedidoProdutoBO, mapaDeProdutos));
+
+        produtoRepositoryPort.salvarTodos(produtosEncontrados);
+    }
+
+    private static void prepararProdutos(PedidoProdutoBO pedidoProdutoBO, Map<Integer, ProdutoBO> mapaDeProdutos) {
+        pedidoProdutoBO.validar();
+        final Integer produtoId = pedidoProdutoBO.getProduto().getId();
+        final ProdutoBO produtoBO = mapaDeProdutos.get(produtoId);
+        produtoBO.validarEstoqueDisponivel(pedidoProdutoBO.getQuantidade());
+        produtoBO.diminuirEstoque(pedidoProdutoBO.getQuantidade());
+
+        pedidoProdutoBO.setProduto(produtoBO);
+        pedidoProdutoBO.calcularSubtotal();
+    }
+
+}
