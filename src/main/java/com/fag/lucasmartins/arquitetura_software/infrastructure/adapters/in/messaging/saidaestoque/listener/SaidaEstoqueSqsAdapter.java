@@ -1,24 +1,14 @@
 package com.fag.lucasmartins.arquitetura_software.infrastructure.adapters.in.messaging.saidaestoque.listener;
 
-<<<<<<< HEAD
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-=======
->>>>>>> 0ca4be6e81a4a218adffd67f0b9c1d6bca84636e
 import com.fag.lucasmartins.arquitetura_software.application.ports.in.service.EstoqueServicePort;
 import com.fag.lucasmartins.arquitetura_software.core.domain.bo.DiminuirEstoqueBO;
 import com.fag.lucasmartins.arquitetura_software.infrastructure.adapters.in.messaging.entradaestoque.exceptions.ConsumerSQSException;
 import com.fag.lucasmartins.arquitetura_software.infrastructure.adapters.in.messaging.saidaestoque.dto.SaidaEstoqueEventDTO;
 import com.fag.lucasmartins.arquitetura_software.infrastructure.adapters.in.messaging.saidaestoque.mapper.SaidaEstoqueDTOMapper;
-<<<<<<< HEAD
-=======
-import io.awspring.cloud.sqs.annotation.SqsListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
->>>>>>> 0ca4be6e81a4a218adffd67f0b9c1d6bca84636e
 
 @Component
 public class SaidaEstoqueSqsAdapter {
